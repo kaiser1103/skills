@@ -1,0 +1,27 @@
+# CPU RAG 插件核心依赖
+# 适用于 Python 3.8+
+
+# 向量数据库
+lancedb>=0.3.0
+numpy>=1.21.0
+pyarrow>=10.0.0
+
+# 模型推理（二选一）
+# 优先使用 ONNX Runtime（更快，CPU 友好）
+onnxruntime>=1.16.0
+
+# 如果 ONNX Runtime 不可用，使用 PyTorch CPU 版本
+# torch>=2.0.0 --index-url https://download.pytorch.org/whl/cpu
+
+# Transformers 和文本处理
+transformers>=4.30.0
+sentencepiece>=0.1.99
+protobuf>=3.20.0
+
+# 文档处理（可选，用于批量导入）
+langchain>=0.1.0
+langchain-community>=0.0.20
+
+# 工具库
+tqdm>=4.65.0
+pyyaml>=6.0

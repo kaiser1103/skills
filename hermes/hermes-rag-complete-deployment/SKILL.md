@@ -25,30 +25,63 @@ tags: [hermes, rag, vector-database, memory, deployment, chromadb]
 
 ## 第一步：安装 CPU RAG 插件
 
-### 1.1 克隆插件仓库
+### 1.1 获取插件
+
+**方式 A：使用内置插件（推荐）**
+
+如果你的 Hermes Agent 是最新版本，CPU RAG 插件已经内置：
+
+```bash
+ls ~/.hermes/hermes-agent/plugins/memory/cpu_rag/
+```
+
+如果目录存在，跳到步骤 1.2。
+
+**方式 B：从 GitHub 下载**
+
+如果插件不存在，从技能仓库下载：
 
 ```bash
 cd ~/.hermes/hermes-agent/plugins/memory/
-git clone https://github.com/yourusername/cpu_rag.git
+git clone https://github.com/kaiser1103/skills.git /tmp/skills
+cp -r /tmp/skills/hermes/hermes-rag-complete-deployment/cpu_rag ./
 cd cpu_rag
 ```
 
 ### 1.2 安装依赖
+
+**方式 A：使用自动安装脚本（推荐）**
+
+```bash
+cd ~/.hermes/hermes-agent/plugins/memory/cpu_rag/
+chmod +x install.sh
+./install.sh
+```
+
+脚本会自动：
+- 安装所有依赖包
+- 下载 embedding 模型（BAAI/bge-small-zh-v1.5）
+- 配置 Hermes config.yaml
+- 创建向量数据库目录
+
+**方式 B：手动安装**
 
 ```bash
 pip install -r requirements.txt
 ```
 
 核心依赖：
-- `chromadb` - 向量数据库
-- `sentence-transformers` - 嵌入模型
+- `lancedb` - 向量数据库
+- `onnxruntime` - 模型推理（优先）或 `torch`（备选）
+- `transformers` - 嵌入模型
 - `langchain` / `langchain-community` - 文档处理
 
 ### 1.3 验证安装
 
 ```bash
-python -c "import chromadb; print(chromadb.__version__)"
-python -c "from sentence_transformers import SentenceTransformer; print('OK')"
+python -c "import lancedb; print('LanceDB:', lancedb.__version__)"
+python -c "from transformers import AutoModel; print('Transformers: OK')"
+python -c "import onnxruntime; print('ONNX Runtime:', onnxruntime.__version__)"
 ```
 
 ---
