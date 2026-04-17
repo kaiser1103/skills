@@ -16,24 +16,49 @@ echo "📋 Python 版本: $python_version"
 # 检查是否在虚拟环境中
 if [ -z "$VIRTUAL_ENV" ]; then
     echo "⚠️  未检测到虚拟环境"
-    echo "建议在虚拟环境中安装避免冲突"
-    read -p "是否继续? (y/N) " -n 1 -r
+    echo ""
+    echo "Python 3.11+ 系统不允许直接安装到系统 Python。"
+    echo ""
+    echo "推荐方案："
+    echo "  1. 创建虚拟环境（推荐）："
+    echo "     python3 -m venv ~/.hermes/venv"
+    echo "     source ~/.hermes/venv/bin/activate"
+    echo "     ./install.sh"
+    echo ""
+    echo "  2. 强制安装到系统（不推荐，可能破坏系统包）"
+    echo ""
+    read -p "选择: [1] 虚拟环境 / [2] 强制安装 / [Q] 退出: " -n 1 -r
     echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        exit 1
-    fi
+    
+    case $REPLY in
+        1)
+            echo "请先创建并激活虚拟环境，然后重新运行此脚本"
+            exit 0
+            ;;
+        2)
+            echo "⚠️  使用 --break-system-packages 强制安装"
+            PIP_FLAGS="--break-system-packages"
+            ;;
+        *)
+            echo "已取消安装"
+            exit 0
+            ;;
+    esac
+else
+    echo "✓ 检测到虚拟环境: $VIRTUAL_ENV"
+    PIP_FLAGS=""
 fi
 
 # 安装核心依赖
 echo ""
 echo "📦 安装核心依赖..."
-pip install -q lancedb numpy pyarrow
+pip install $PIP_FLAGS -q lancedb numpy pyarrow
 
 # 安装模型推理依赖
 echo "📦 安装模型推理依赖..."
 
 # 尝试安装 ONNX Runtime
-if pip install -q onnxruntime 2>/dev/null; then
+if pip install $PIP_FLAGS -q onnxruntime 2>/dev/null; then
     echo "  ✓ ONNX Runtime 安装成功"
     USE_ONNX=true
 else
@@ -42,12 +67,12 @@ else
 fi
 
 # 安装 Transformers
-pip install -q transformers sentencepiece protobuf
+pip install $PIP_FLAGS -q transformers sentencepiece protobuf
 
 # 如果 ONNX 不可用，安装 PyTorch
 if [ "$USE_ONNX" = false ]; then
     echo "📦 安装 PyTorch (CPU 版本)..."
-    pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+    pip install $PIP_FLAGS -q torch --index-url https://download.pytorch.org/whl/cpu
 fi
 
 # 确定模型路径
@@ -91,7 +116,7 @@ if [ "$USE_ONNX" = true ]; then
     if [ -f "$ONNX_DIR/model.onnx" ]; then
         echo "  ✓ ONNX 模型已存在，跳过转换"
     else
-        pip install -q optimum[exporters] 2>/dev/null || {
+        pip install $PIP_FLAGS -q optimum[exporters] 2>/dev/null || {
             echo "  ⚠️  optimum 安装失败，跳过 ONNX 转换（使用 PyTorch 模式）"
         }
         
