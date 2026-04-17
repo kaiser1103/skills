@@ -13,6 +13,11 @@ hermes-rag-complete-deployment/
 ├── requirements.txt      # Python 依赖清单
 ├── install.sh            # 自动安装脚本
 ├── test_plugin.py        # 插件测试脚本
+├── scripts/              # 批量导入脚本目录
+│   ├── README.md         # 脚本使用说明
+│   ├── import_docs_fast.py          # 快速批量导入（推荐）
+│   ├── import_docs_onnx_simple.py   # ONNX 加速版本
+│   └── import_docs_to_rag.py        # 基础版本
 └── README.md             # 本文件
 ```
 
@@ -33,6 +38,20 @@ pip install -r requirements.txt
 ```
 
 然后按照 [SKILL.md](SKILL.md) 中的步骤配置。
+
+## 📥 批量导入文档
+
+安装完成后，使用批量导入脚本导入历史文档：
+
+```bash
+# 推荐：使用快速批量导入
+python scripts/import_docs_fast.py /path/to/your/docs/
+
+# 或使用 ONNX 加速版本（需要先转换模型）
+python scripts/import_docs_onnx_simple.py /path/to/your/docs/
+```
+
+详细说明见 [scripts/README.md](scripts/README.md)
 
 ## 📋 依赖说明
 
