@@ -1,0 +1,6 @@
+name: cpu_rag
+version: 0.1.0
+description: "CPU + 内存 RAG 记忆插件 - 纯CPU运行的向量检索记忆系统，无需GPU，基于LanceDB和ONNX Runtime"
+hooks:
+  - prefetch
+  - sync_turn

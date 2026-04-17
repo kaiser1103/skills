@@ -7,8 +7,12 @@
 ```
 hermes-rag-complete-deployment/
 ├── SKILL.md              # 完整部署指南（主文档）
+├── __init__.py           # CPU RAG 插件核心代码
+├── document_importer.py  # 文档批量导入工具
+├── plugin.yaml           # 插件配置文件
 ├── requirements.txt      # Python 依赖清单
 ├── install.sh            # 自动安装脚本
+├── test_plugin.py        # 插件测试脚本
 └── README.md             # 本文件
 ```
 
