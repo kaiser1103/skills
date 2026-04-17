@@ -4,7 +4,38 @@
 
 ## 脚本说明
 
-### import_docs_fast.py（推荐）
+### import_docs_incremental.py（推荐用于增量更新）
+
+**智能增量导入工具**，支持文档哈希校验和变化检测。
+
+**特点：**
+- 文档哈希校验（MD5）- 检测内容变化
+- 增量导入 - 只导入新文档或修改过的文档
+- 防止重复 - 自动跳过未变化的文档
+- 禁止清空数据库 - 保护现有数据
+- 进度统计 - 显示新增/更新/跳过数量
+
+**使用方法：**
+```bash
+# 增量导入（默认）
+python scripts/import_docs_incremental.py
+
+# 指定目录
+python scripts/import_docs_incremental.py --docs-dir /path/to/docs
+
+# 全量导入（重新导入所有文档，但不清空数据库）
+python scripts/import_docs_incremental.py --full
+```
+
+**适用场景：**
+- 定期更新文档（每天/每周）
+- 文档持续增长的项目
+- 需要避免重复导入
+- 保护现有记忆数据
+
+---
+
+### import_docs_fast.py（推荐用于首次导入）
 
 **最快的批量导入工具**，使用批量编码和批量写入优化。
 
@@ -23,6 +54,7 @@ python scripts/import_docs_fast.py /path/to/docs/
 - 首次导入大量文档（100+ 文件）
 - 需要最快导入速度
 - 文档格式统一（Markdown）
+- 全新的 RAG 数据库
 
 ---
 
@@ -77,11 +109,18 @@ python scripts/import_docs_to_rag.py /path/to/docs/
 
 ## 性能对比
 
-| 脚本 | 速度 | 内存占用 | 依赖 |
-|------|------|----------|------|
-| import_docs_fast.py | ⭐⭐⭐⭐⭐ | 中等 | PyTorch/ONNX |
-| import_docs_onnx_simple.py | ⭐⭐⭐⭐ | 低 | ONNX Runtime |
-| import_docs_to_rag.py | ⭐⭐⭐ | 低 | PyTorch/ONNX |
+| 脚本 | 速度 | 内存占用 | 增量导入 | 哈希校验 | 依赖 |
+|------|------|----------|---------|---------|------|
+| import_docs_incremental.py | ⭐⭐⭐⭐ | 中等 | ✅ | ✅ | PyTorch/ONNX |
+| import_docs_fast.py | ⭐⭐⭐⭐⭐ | 中等 | ❌ | ❌ | PyTorch/ONNX |
+| import_docs_onnx_simple.py | ⭐⭐⭐⭐ | 低 | ❌ | ❌ | ONNX Runtime |
+| import_docs_to_rag.py | ⭐⭐⭐ | 低 | ❌ | ❌ | PyTorch/ONNX |
+
+## 推荐使用流程
+
+1. **首次导入** - 使用 `import_docs_fast.py`（最快）
+2. **日常更新** - 使用 `import_docs_incremental.py`（智能增量）
+3. **大规模导入** - 使用 `import_docs_onnx_simple.py`（低内存）
 
 ## 通用参数
 
